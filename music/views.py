@@ -24,3 +24,20 @@ class LibraryDetails(APIView):
             return Music_library.objects.get(pk=pk)
         except Music_library.DoesNotExist:
             raise Http404
+    def get(self, request, pk, format=None):
+        songs = self.get_by_id(pk)
+        serializer= MusicSerializer(songs)
+        return Response(serializer.data)
+    def put(self, request, pk, format=None):
+        songs= self.get_by_id(pk)
+        serializer= MusicSerializer(songs, request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, pk, format=None):
+        songs = self.get_by_id(pk)
+        songs.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+        
